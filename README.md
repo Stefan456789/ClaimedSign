@@ -1,6 +1,8 @@
 # ClaimedSign
 A Minecraft plugin to claim an area with a sign.
 
+Tested for 1.18!
+
 # Usage
 <pre>
 Place a sign and write "claim" then go in the next line and then specify your radius in a whole number.
