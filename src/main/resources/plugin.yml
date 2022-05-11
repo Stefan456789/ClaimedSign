@@ -1,0 +1,16 @@
+name: ClaimedSign
+version: '${project.version}'
+main: me.stefan456789.claimedsign.ClaimedSign
+api-version: 1.18
+authors: [ Stefan456789 ]
+description: A plugin to claim an area with a sign
+website: https://mcg-network.rocks/
+commands:
+  claimedAreas:
+    description: A command to get all claimed areas or just those of a single player.
+    usage: "Usage: /claimedAreas [  |all|<PlayerName>] [  |removeAll]"
+  addToTeam:
+    description: A command to get all claimed areas or just those of a single player.
+    usage: "Usage: /addToTeam <PlayerName>"
+softdepend:
+  - WorldBorderAPI
