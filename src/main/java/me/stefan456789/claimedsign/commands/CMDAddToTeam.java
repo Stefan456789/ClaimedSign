@@ -20,7 +20,9 @@ public class CMDAddToTeam implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        main.joinArea(main.getServer().getPlayer(sender.getName()), main.getServer().getPlayer(args[0]));
+
+        main.joinArea(main.getServer().getPlayer(sender.getName()), args[0]);
+        sender.sendMessage("Added " + args[0] + " to all existing signs owned by you.");
         return true;
     }
 

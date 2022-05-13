@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ClaimedSign extends JavaPlugin {
 
@@ -56,6 +57,8 @@ public final class ClaimedSign extends JavaPlugin {
 
         getCommand("addToTeam").setExecutor(attHandler);
         getCommand("addToTeam").setTabCompleter(attHandler);
+
+
     }
 
     @Override
@@ -90,6 +93,13 @@ public final class ClaimedSign extends JavaPlugin {
     }
 
     public Player getProtectedAreaOwner(Location location) {
+        SerializableProtectedRegion r = getProtectedArea(location);
+        if (r == null)
+            return null;
+        return r.getOwner();
+    }
+
+    public SerializableProtectedRegion getProtectedArea(Location location) {
         for (SerializableProtectedRegion r : areas) {
             if (r.getLocation().getWorld().equals(location.getWorld())) {
                 if (calcIntersectOneAxis(r.getLocation().getX(), r.getRadius(), location.getX()))
@@ -103,7 +113,7 @@ public final class ClaimedSign extends JavaPlugin {
 
 
             } else continue;
-            return r.getOwner();
+            return r;
         }
         return null;
     }
@@ -122,17 +132,28 @@ public final class ClaimedSign extends JavaPlugin {
         save();
     }
 
-    public void removeProtectedArea(Location location, Player breaker) {
+    public boolean removeProtectedArea(Location location, Player breaker) {
+        AtomicBoolean foundNotOwner = new AtomicBoolean(false);
+
         areas.removeIf((r) -> {
             List<String> allowed = r.getGuests();
             allowed.add(r.getOwner().getName());
-            boolean remove = r.getLocation().equals(location) && allowed.contains(breaker.getName());
-            if (remove)
+            boolean remove = r.getLocation().equals(location);
+            if (!foundNotOwner.get())
+                foundNotOwner.set(remove);
+            if (remove && allowed.contains(breaker.getName())) {
+                foundNotOwner.set(false);
                 breaker.sendMessage("Claimed area removed!");
+            }
 
             return remove;
         });
         save();
+        return foundNotOwner.get();
+    }
+
+    public void removeProtectedArea(Player owner) {
+        areas.removeIf(r -> r.getOwner().equals(owner));
     }
 
     public void clearProtectedAreas() {
@@ -144,10 +165,11 @@ public final class ClaimedSign extends JavaPlugin {
         return areas;
     }
 
-    public void joinArea(Player owner, Player guest) {
+    public void joinArea(Player owner, String guestName) {
         for (SerializableProtectedRegion r : areas) {
             if (r.getOwner().equals(owner)) {
-                r.addGuest(guest.getName());
+                r.addGuest(guestName);
+
             }
         }
     }

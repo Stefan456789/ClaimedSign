@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,15 +23,28 @@ public class CMDClaimedAreas implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        if (args.length == 2) {
-            main.clearProtectedAreas();
+        Player owner = main.getServer().getPlayer(sender.getName());
+        if (args.length == 2 && args[1].equals("removeAll")) {
+            if (args[0].equals("all"))
+                main.clearProtectedAreas();
+            else if (args[0].equals("current"))
+                main.removeProtectedArea(main.getProtectedAreaOwner(owner.getLocation()));
+            else {
+                if (args[0].equals(owner.getDisplayName()))
+                    main.removeProtectedArea(owner);
+            }
             return true;
+        } else if (args[0].equals("current")) {
+            SerializableProtectedRegion r = main.getProtectedArea(owner.getLocation());
+
+            sender.sendMessage(r.toString());
         }
+
 
         for (SerializableProtectedRegion r : main.getProtectedAreas()) {
             if (!(args.length == 0 || args[0].toLowerCase().equals("all")) && !args[0].equals(r.getOwner().getDisplayName()))
                 continue;
-            sender.sendMessage(r.getOwner() + ": " + r.getLocation().toString());
+            sender.sendMessage(r.toString());
         }
 
 
@@ -48,6 +62,7 @@ public class CMDClaimedAreas implements CommandExecutor, TabCompleter {
                 options.add(r.getOwner().getDisplayName());
             }
             options.add(0, "all");
+            options.add(1, "current");
             options.removeIf(guess -> !guess.startsWith(args[0]));
         } else if (args.length == 2 && !args[0].equals("all"))
             options = Collections.singletonList("removeAll");

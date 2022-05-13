@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class SerializableProtectedRegion implements Serializable {
     private transient Player owner;
-    private final String ownerName;
+    private final String ownerUUID;
     private final ArrayList<String> guestNames = new ArrayList<>();
     private final double x, y, z;
     private final double radius;
@@ -22,7 +22,7 @@ public class SerializableProtectedRegion implements Serializable {
 
     public SerializableProtectedRegion(final Player owner, final Location location, final double radius) {
         this.owner = owner;
-        this.ownerName = owner.getName();
+        this.ownerUUID = owner.getUniqueId().toString();
         this.x = location.getX();
         this.y = location.getY();
         this.z = location.getZ();
@@ -53,7 +53,10 @@ public class SerializableProtectedRegion implements Serializable {
     public Player getOwner() {
 
         if (this.owner == null) {
-            this.owner = Bukkit.getPlayer(this.ownerName);
+            this.owner = Bukkit.getPlayer(this.ownerUUID);
+        }
+        if (this.owner == null) {
+            this.owner = Bukkit.getOfflinePlayer(UUID.fromString(this.ownerUUID)).getPlayer();
         }
         return this.owner;
     }
@@ -66,4 +69,13 @@ public class SerializableProtectedRegion implements Serializable {
         return guestNames;
     }
 
+    @Override
+    public String toString() {
+        if (guestNames.size() == 0)
+            return "Owner:" + owner + ", at " + x + " " + y + " " + z + " with radius " + radius;
+        StringBuilder guestList = new StringBuilder();
+        for (String s : guestNames)
+            guestList.append(s).append(", ");
+        return "Owner:" + owner + ", members:" + guestList + "at " + x + " " + y + " " + z + " with radius " + radius;
+    }
 }

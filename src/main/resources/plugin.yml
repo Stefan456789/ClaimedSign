@@ -8,7 +8,7 @@ website: https://mcg-network.rocks/
 commands:
   claimedAreas:
     description: A command to get all claimed areas or just those of a single player.
-    usage: "Usage: /claimedAreas [  |all|<PlayerName>] [  |removeAll]"
+    usage: "Usage: /claimedAreas [  |current|all|<PlayerName>] [  |removeAll]"
   addToTeam:
     description: A command to get all claimed areas or just those of a single player.
     usage: "Usage: /addToTeam <PlayerName>"

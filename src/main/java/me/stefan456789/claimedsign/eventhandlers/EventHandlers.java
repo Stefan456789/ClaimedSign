@@ -68,7 +68,8 @@ public class EventHandlers implements Listener {
     @EventHandler
     public void deleteClaimedArea(BlockBreakEvent event) {
         if (event.getBlock().getBlockData() instanceof org.bukkit.block.data.type.Sign || event.getBlock().getBlockData() instanceof WallSign) {
-            main.removeProtectedArea(event.getBlock().getLocation(), event.getPlayer());
+            event.setCancelled(main.removeProtectedArea(event.getBlock().getLocation(), event.getPlayer()));
+
         }
     }
 
