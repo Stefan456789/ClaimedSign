@@ -25,6 +25,10 @@ public class CMDClaimedAreas implements CommandExecutor, TabCompleter {
 
         Player owner = main.getServer().getPlayer(sender.getName());
         if (args.length == 2 && args[1].equals("removeAll")) {
+            if (!sender.isOp()) {
+                sender.sendMessage("You don't have permission to use this command!");
+                return true;
+            }
             if (args[0].equals("all"))
                 main.clearProtectedAreas();
             else if (args[0].equals("current"))
